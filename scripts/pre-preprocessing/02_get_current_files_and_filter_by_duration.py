@@ -32,12 +32,13 @@ def main():
     # Drop helper column and write CSV with the original column order
     df_keep = df_keep.drop(columns=["_local_path"])
 
+    # Filter files by minumum duration
     filtered_duration = df_keep[df_keep["duration"] > MIN_DURATION]
-    filtered_duration.to_csv(OUTPUT_CSV, index=False)
-    print(f"Saved {len(filtered_duration)} rows (duration > 270) to {OUTPUT_CSV}")
 
-    df_keep.to_csv(OUTPUT_CSV, index=False)
-    print(f"{len(df_keep)} rows written to {OUTPUT_CSV}")
+    # [DO STUFF HERE]
+
+    filtered_duration.to_csv(OUTPUT_CSV, index=False)
+    print(f"{len(filtered_duration)} rows written to {OUTPUT_CSV}")
 
 
 if __name__ == "__main__":
