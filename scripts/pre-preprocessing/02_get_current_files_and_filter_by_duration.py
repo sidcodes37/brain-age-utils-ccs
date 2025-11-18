@@ -1,11 +1,12 @@
-# Create a new CSV that keeps only rows whose filepath points to an existing file under a local base directory.
-
 import pandas as pd
 from pathlib import Path
 
-INPUT_CSV = "../../outputs/TUH-EEG_data_selective_16.csv"
-OUTPUT_CSV = "../../outputs/current_files_270s.csv"
-BASE_PATH = Path("")
+# Create a new CSV that keeps only rows whose filepath points to an existing file under a local base directory.
+# And the files have a valid age and gender.
+
+INPUT_CSV = "../../outputs/TUH-EEG_selective_16.csv"
+OUTPUT_CSV = "../../outputs/valid_files.csv"
+BASE_PATH = Path("") # Insert path here: /somewhere/TUH_Healthy
 MIN_DURATION = 270
 
 
@@ -33,12 +34,27 @@ def main():
     df_keep = df_keep.drop(columns=["_local_path"])
 
     # Filter files by minumum duration
-    filtered_duration = df_keep[df_keep["duration"] > MIN_DURATION]
+    df_keep = df_keep[df_keep["duration"] > MIN_DURATION]
 
-    # [DO STUFF HERE]
+    # Exclude rows where age is missing/empty/'nan' or numeric 999
+    age_series = df_keep["age"]
+    age_str = age_series.fillna("").astype(str).str.strip()
+    age_not_blank = age_str.ne("") & ~age_str.str.lower().eq("nan")
+    age_num = pd.to_numeric(age_str, errors="coerce")
+    age_not_999 = ~(age_num == 999)
+    age_mask = age_not_blank & age_not_999
 
-    filtered_duration.to_csv(OUTPUT_CSV, index=False)
-    print(f"{len(filtered_duration)} rows written to {OUTPUT_CSV}")
+    # Exclude rows where gender is missing/empty/'nan'
+    gender_series = df_keep["gender"]
+    gender_str = gender_series.fillna("").astype(str).str.strip()
+    gender_mask = gender_str.ne("") & ~gender_str.str.lower().eq("nan")
+
+    # combined mask: keep only rows having both age & gender
+    combined_mask = age_mask & gender_mask
+    df_keep = df_keep.loc[combined_mask].copy()
+
+    df_keep.to_csv(OUTPUT_CSV, index=False)
+    print(f"{len(df_keep)} rows written to {OUTPUT_CSV}")
 
 
 if __name__ == "__main__":

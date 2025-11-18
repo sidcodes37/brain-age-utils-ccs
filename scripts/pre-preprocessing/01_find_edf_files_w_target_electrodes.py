@@ -1,21 +1,16 @@
 import os, re, csv
 
 """
-Streaming parse of headers.txt. Hard-coded input/output paths and a SELECTIVE_ELECTRODES flag.
+Stream headers.txt.
 
-Behavior:
  - When SELECTIVE_ELECTRODES is True: write CSV rows only for files that contain ALL TARGET_ELECTRODES.
- - When SELECTIVE_ELECTRODES is False: write CSV rows for all files encountered.
  - CSV columns: filepath, age, gender, duration, fs
-
-Usage:
-    Edit INPUT_TXT, OUTPUT_CSV, SELECTIVE_ELECTRODES at top and run the script.
 """
 
 
 # CONFIGURATION 
 INPUT_TXT = "../../TUH-EEG/headers.txt"
-OUTPUT_CSV = "../../outputs/TUH-EEG_data_selective_16.csv"
+OUTPUT_CSV = "../../outputs/TUH-EEG_selective_16.csv"
 
 # When True, only write files that contain ALL TARGET_ELECTRODES.
 # When False, write a row for every file record (no electrode filtering).
